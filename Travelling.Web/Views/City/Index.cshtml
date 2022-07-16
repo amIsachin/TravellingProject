@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>CityTable</h2>
+
+<div>
+    <form>
+        <input type="text" name="Search" value="" id="searchText" />
+        <button type="button" id="searchBtn">Search</button>
+        <button type="button" data-href="@Url.Action("Action", "City")" class="performAction" data-toggle="modal" data-target="#actionModal" data-backdrop="static" data-keyboard="false">Create</button>
+    </form>
+</div>
+
+<div id="tabelContainer">
+    @{
+        Html.RenderAction("CityTable");
+    }
+</div>
+
+<div id="actionContainer">
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="actionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <!--Rendered Model-->
+    </div>
+</div>
+
+<script type="text/javascript">
+    //--> Search Button Functionallity.
+    $('#searchBtn').click(function () {
+        var searchValue = $('#searchText').val();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("CityTable", "City")',   //--> '/City/CityTable',
+            data: {
+                search: searchValue
+            }
+        })
+            .done(function (response) {
+                $('#tabelContainer').html(response);
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('Opps Something went wrong!!')
+            })
+    })
+
+    //--> Creata button Functionallity.
+    $(document).ready(function () {
+        $('.performAction').click(function () {
+            $.ajax({
+                url: $(this).attr('data-href')
+            })
+                .done(function (response) {
+                    $('#actionModal .modal-dialog').html(response);
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+    });  //--> Here is close document ready function().
+</script>

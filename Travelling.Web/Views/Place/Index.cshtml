@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div>
+    <input type="text" name="Search" id="searchTxt" />
+    <button type="button" id="searchBtn">Search</button>
+    <button type="button" data-href="@Url.Action("Action", "Place")" class="performAction" data-toggle="modal" data-target="#placeActionModel" data-backdrop="static" data-keyboard="false">Create</button>
+</div>
+
+<div id="tableContainer">
+    @{
+        Html.RenderAction("Listing");
+    }
+</div>
+
+<div id="actionContainer">
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="placeActionModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    //--> Create Button Functionallity.
+    $(document).ready(function () {
+        $('.performAction').click(function () {
+            $.ajax({
+                url: $(this).attr('data-href')
+            })
+                .done(function (response) {
+                    $('#placeActionModel .modal-dialog').html(response);
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        });
+
+        //--> Search Button functionallity.
+        $('#searchBtn').click(function () {
+            var searchValue = $('#searchTxt').val();
+            $.ajax({
+                url: '/Place/Listing',
+                data: {
+                    search: searchValue
+                }
+            })
+                .done(function (response) {
+                    $('#tableContainer').html(response);
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+    });   //--> Here is close document ready function().
+</script>

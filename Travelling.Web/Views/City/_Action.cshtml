@@ -1,0 +1,172 @@
+﻿@model Travelling.Web.ViewModels.CityViewModel
+
+@{
+    var imageURL = !string.IsNullOrEmpty(Model.ImageURL) ? Model.ImageURL : "/Content/ThemeMaterial/images/default-image.jpg";
+}
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+            @if (Model.ID > 0)
+            {
+                <span>Edit</span>
+            }
+            else
+            {
+                <span>Create</span>
+            }
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="createCity">
+            <input type="hidden" name="ID" value="@Model.ID" />
+
+            <label>Select the country</label> <br />
+            <select name="countryID" class="form-control">
+                @foreach (var country in Model.Country)
+                {
+                    <option value="@country.ID"> @country.Name </option>
+                    @*@(country.ID == Model.countryID ? "Selected" : string.Empty)*@
+                }
+            </select>
+            <br /><br />
+
+            <label>Name</label>
+            <input type="text" name="Name" value="@Model.Name" id="Name" />
+            <br /><br />
+
+            <label>Description</label>
+            <input type="text" name="Description" value="@Model.Description" id="Description" />
+            <br />
+
+            <label>Image</label>
+            <input type="hidden" name="ImageURL" id="ImageURL" value="@Model.ImageURL" />
+            <input type="file" name="Image" accept=".png, .jpg, .jpeg" id="imageUpload" />
+
+            <img src="@imageURL" id="cityImage" width="150" height="150" style="border: none;" />
+        </form>
+
+        <div class="errorDiv">
+
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="actionBtn" class="btn btn-primary">Save changes</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    //--> Creata button Functionallity.
+    $(document).ready(function () {
+        //--> Image Funtionallity
+        $('#imageUpload').change(function () {
+            debugger;
+            var element = this;
+            var formData = new FormData();
+            var totalFiles = element.files.length;
+
+            for (var i = 0; i < totalFiles; i++) {
+                var file = element.files[i];
+                formData.append("photo", file);
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Shared/UploadImage',
+                dataType: 'json',
+                data: formData,
+                contentType: false,
+                processData: false
+            })
+                .done(function (response) {
+                    debugger;
+                    console.log(response);
+                    if (response.Success) {
+                        $('#cityImage').attr('src', response.ImageURL);
+                        $('#ImageURL').val(response.ImageURL);
+                    }
+                    else {
+                        alert("Oops something went wrong while oploading image");
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+        //--> action Button functionallity.
+        $('#actionBtn').click(function () {
+            debugger;
+            if ($('#createCity').valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/City/Action',
+                    data: $('#createCity').serialize()
+                })
+                    .done(function (response) {
+                        if (response) {
+                            window.location.reload();
+                        }
+                        else {
+                            $('.errorDiv').html(response.Message);
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Opps Something went wrong!!')
+                    })
+            }
+            else {
+                swal({
+                    title: "Warning?",
+                    text: "Please enter all required all fields!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+            }
+        })
+
+
+        //--> Applying Validation on form.
+        $('#createCity').validate({
+            rules: {
+                Name: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 100
+                },
+                Description: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 500
+                },
+                ImageURL: {
+                    required: true
+                }
+            },
+            messages: {
+                Name: {
+                    required: 'Name is required',
+                    minlength: 'Minimum length should be 1',
+                    maxlength:'Maximum length should be 100'
+                },
+                Description: {
+                    required: 'Descrition is required',
+                    minlength: 'Minimum length is 1',
+                    maxlength:'Maximum length should be 500'
+                },
+                ImageURL: {
+                    required:'Image is required'
+                }
+            }
+
+        })
+
+    });  //--> Here is close document ready function().
+</script>

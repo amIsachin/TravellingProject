@@ -1,0 +1,24 @@
+﻿@model Travelling.Web.ViewModels.PlaceWidgetViewModel
+
+@if (Model.Places != null && Model != null)
+{
+    <div class="row">
+        @foreach (var item in Model.Places)
+        {
+            <div class="col-md-4 col-sm-6 fh5co-tours animate-box" data-animate-effect="fadeIn">
+                <div href="#">
+                    <img src="@item.ImageURL" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+                    <div class="desc">
+                        <span></span>
+                        <h3>@item.Price</h3>
+                        <span class="price"></span>
+                        <a class="btn btn-primary btn-outline" href="#">Book Now <i class="icon-arrow-right22"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col-md-12 text-center animate-box">
+            <p><a class="btn btn-primary btn-outline btn-lg" href="#">See All Offers <i class="icon-arrow-right22"></i></a></p>
+        </div>
+    </div>
+}

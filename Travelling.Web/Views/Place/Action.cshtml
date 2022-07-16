@@ -1,0 +1,180 @@
+﻿@*@model Travelling.Business.Place*@
+
+@model Travelling.Web.ViewModels.CityPlaceViewModels
+
+@{
+    ViewBag.Title = "Action";
+    var imageURL = !string.IsNullOrEmpty(Model.ImageURL) ? Model.ImageURL : "/Content/ThemeMaterial/images/default-image.jpg";
+}
+
+<h2>Action</h2>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+            @if (Model.ID > 0)
+            {
+                <span>Edit</span>
+            }
+            else
+            {
+                <span>Create</span>
+            }
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="createPlace">
+            <input type="hidden" name="ID" value="@Model.ID" />
+
+            <label>Please select the city</label> <br />
+            <select name="cityID" class="form-control">
+                @foreach (var item in Model.City)
+                {
+                    <option value="@item.ID">@item.Name</option>
+                }
+            </select>
+            <br /><br />
+
+            <label>Name</label>
+            <input type="text" name="Name" id="Name" value="@Model.Name" />
+            <br /><br />
+
+            <label>Description</label>
+            <input type="text" name="Description" id="Description" value="@Model.Description" />
+            <br /><br />
+
+            <label>Price</label>
+            <input type="text" name="Price" id="Price" value="@Model.Price" />
+            <br />
+
+            <label>Image</label>
+            <input type="hidden" name="ImageURL" id="ImageURL" value="@Model.ImageURL" />
+            <input type="file" name="Image" accept=".png, .jpg, .jpeg" id="imageUpload" />
+            <br />
+
+            <img src="@imageURL" id="placeImage" width="100" height="100" />
+        </form>
+
+        <div class="errorDiv">
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="ActionBtn">Save changes</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //--> Image Button functionallity.
+        $('#imageUpload').change(function () {
+
+            debugger
+            var element = this;
+            var formData = new FormData();
+            var totalFiles = element.files.length;
+
+            for (var i = 0; i < totalFiles; i++) {
+                var file = element.files[i];
+                formData.append("photo", file);
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Shared/UploadImage',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false
+            })
+                .done(function (response) {
+                    if (response.Success) {
+                        $('#placeImage').attr('src', response.ImageURL);
+                        $('#ImageURL').val(response.ImageURL)
+                    }
+                    else {
+                        alert('Oops something went wrong while uploading image');
+                    }
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+        //--> Action Button Functonallity.
+        $('#ActionBtn').click(function () {
+            if ($('#createPlace').valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Place/Action',
+                    data: $('#createPlace').serialize()
+                })
+                    .done(function (response) {
+                        if (response) {
+                            window.location.reload();
+                        }
+                        else {
+                            $('.errorDiv').html(response.Message);
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Opps Something went wrong!!')
+                    })
+            }
+            else {
+                swal({
+                    title: "Warning?",
+                    text: "Please enter all required all fields!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+            }
+        })
+
+        //--> Applying Validation on form.
+        $('#createPlace').validate({
+            rules: {
+                Name: {
+                    required: true,
+                    minlength: 1,
+                    maxlength:100
+                },
+                Description: {
+                    required: true,
+                    minlength: 1,
+                    maxlength:500
+                },
+                Price: {
+                    required: true,
+                },
+                ImageURL: {
+                    required:true
+                }
+            },
+            messages: {
+                Name: {
+                    required: 'Name is required',
+                    minlength: 'Minimum length should be 1',
+                    maxlength:'Maximum length should be 100'
+                },
+                Description: {
+                    required: 'Description is required',
+                    minlength: 'Minimun length should be 1',
+                    maxlength:'Maximum length should be 500'
+                },
+                ImageURL: {
+                    required:'Image is required'
+                },
+                Price: {
+                    required:'Amount is required'
+                }
+            }
+        })
+    })
+</script>

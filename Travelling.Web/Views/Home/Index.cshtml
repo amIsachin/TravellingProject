@@ -1,0 +1,76 @@
+﻿@model Travelling.Web.ViewModels.HomeViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+    var first = Model.Places.First();
+}
+
+<div id="fh5co-wrapper">
+    <div id="fh5co-page">
+        <div id="fh5co-tours" class="fh5co-section-gray">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2 text-center heading-section animate-box">
+                        <h3>Hot Tours</h3>
+                        <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    </div>
+                </div>
+                @*  *@
+
+                @*@{
+                     Html.RenderAction("Widget", "Widgets");
+                }*@
+
+                <div class="row">
+                    @foreach (var item in Model.Places)
+                    {
+
+                        <div class="col-md-4 col-sm-6 fh5co-tours animate-box" data-animate-effect="fadeIn">
+                            <div href="#">
+                                <img src="@item.ImageURL" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+                                <div class="desc">
+                                    <h3 id="Name" data-name="@item.Name">@item.Name</h3>
+                                    <span id="description" data-description="@item.Description">@item.Description</span>
+                                    <span class="price" data-price="@item.Price">@item.Price</span>
+                                    <a class="btn btn-primary btn-outline bookNow" href="#" data-id="@item.ID">Book Trip <i class="icon-arrow-right22"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-md-12 text-center animate-box">
+                        <p><a class="btn btn-primary btn-outline btn-lg" href="#">See All Offers <i class="icon-arrow-right22"></i></a></p>
+                    </div>
+                </div>
+                @*  *@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.bookNow').one('click',function () {
+            window.location.href = '@Url.Action("ShowOrderPage", "PlaceOrder")/' + $(this).attr('data-id');
+        })
+
+    }) //--> Here is Close document ready Function().
+</script>
+
+@* ------------------------------------------------------------------------------------------------------- *@
+
+@*debugger;
+    $.ajax({
+        type: 'GET',
+        url: '@Url.Action("ShowOrderPage", "PlaceOrder")',
+        data: {
+            ID: $(this).attr('data-id')
+        }
+    })
+        .done(function (response) {
+            window.location.href = '@Url.Action("ShowOrderPage", "PlaceOrder")';
+        })
+
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            alert('Opps Something went wrong!!')
+        })*@

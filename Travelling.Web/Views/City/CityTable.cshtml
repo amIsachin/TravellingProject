@@ -1,0 +1,144 @@
+﻿@*@model IEnumerable<Travelling.Business.City>*@
+
+@model Travelling.Web.ViewModels.CitySearchViewModel
+
+@{
+    ViewBag.Title = "CityTable";
+}
+
+<hr />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Country Name</th>
+                <th>Image</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.City.Count() > 0 && Model != null)
+            {
+                foreach (var city in Model.City)
+                {
+                    <tr>
+                        <td>@city.Name</td>
+                        <td>@city.Description</td>
+                        <td>
+                            @if (city.Country != null)
+                            {
+                                <text>@city.Country.Name</text>
+                            }
+                            else
+                            {
+                                <text>----</text>
+                            }
+                        </td>
+                        <td>
+                            @if (city.ImageURL != null)
+                            {
+                                <img src="@Url.Content(city.ImageURL)" width="80" height="80" alt="Alternate Text" />
+                            }
+                        </td>
+                        <td><button type="button" data-href="@Url.Action("Action", "City", new { ID = city.ID })" class="performAction" data-toggle="modal" data-target="#actionModal" data-id="@city.ID">Edit</button></td>
+
+                        <td><button type="button" data-href="@Url.Action("Delete", "City", new { ID = city.ID })" class="performAction" data-toggle="modal" data-target="#actionModal" data-id="@city.ID">Delete</button></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5" class="alert alert-danger fade in">No city found...</td></tr>
+            }
+        </tbody>
+    </table>
+
+
+    <div>
+        @if (Model.Pager != null&&Model.Pager.TotalPages>1)
+        {
+            if (Model.Pager.CurrentPage > 1)
+            {
+                <button class="pageButtons" data-pageNo="1">First</button>
+                <button class="pageButtons" data-pageNo="@(Model.Pager.CurrentPage - 1 )">Previous</button>
+            }
+
+            for (int page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                string activeClass = Model.Pager.CurrentPage == page ? "active bg-info" : string.Empty;
+                <button class="pageButtons activeClass" data-pageNo="@page">@page</button>
+            }
+
+            if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <button class="pageButtons" data-pageNo="@(Model.Pager.CurrentPage + 1 )">Next</button>
+                <button class="pageButtons" data-pageNo="@(Model.Pager.EndPage)">Last</button>
+            }
+        }
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        //--> Save City Functionallity.
+        $('.ActionBtn').click(function () {
+            $.ajax({
+                url: $(this).attr('data-href'),
+            })
+                .done(function (response) {
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+
+        //--> pagination Functionallity.
+        $('.pageButtons').click(function () {
+            debugger;
+            $.ajax({
+                url: '/City/CityTable',
+                data: {
+                    pageNo: $(this).attr('data-pageNo')
+                }
+            })
+                .done(function (response) {
+                    $('#tableContainer').html(response);
+                })
+
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+
+        })
+
+        //--> Modal cancel Button functionallity.
+        $('#cancelBtn').click(function () {
+            window.location.href = '/City/Index'
+        })
+
+    }) //-->  Here is Close document ready function().
+</script>
+
+
+@*<td><button type="button" class="editBtn" data-id="@city.ID">Edit</button></td>*@
+@*glyphicon glyphicon-trash*@
+@*glyphicon glyphicon-trash*@
+
+@*data: $('#createCity').serialize()*@
+
+
+@*.done(function (response) {
+    $('#actionContainer').html(response);
+    $('#Name').val('');
+    $('#Description').val('');
+    window.location.href = '/City/Index'*@

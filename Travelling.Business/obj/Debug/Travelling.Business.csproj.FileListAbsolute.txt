@@ -1,0 +1,12 @@
+C:\Users\pankaj\source\repos\TravellingProject\Travelling.Business\bin\Debug\Travelling.Business.dll
+C:\Users\pankaj\source\repos\TravellingProject\Travelling.Business\bin\Debug\Travelling.Business.pdb
+C:\Users\pankaj\source\repos\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.csproj.CoreCompileInputs.cache
+C:\Users\pankaj\source\repos\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.dll
+C:\Users\pankaj\source\repos\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.pdb
+C:\Users\pankaj\source\repos\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.csproj.AssemblyReference.cache
+E:\Sachin\Application\TravellingProject\Travelling.Business\bin\Debug\Travelling.Business.dll
+E:\Sachin\Application\TravellingProject\Travelling.Business\bin\Debug\Travelling.Business.pdb
+E:\Sachin\Application\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.csproj.AssemblyReference.cache
+E:\Sachin\Application\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.csproj.CoreCompileInputs.cache
+E:\Sachin\Application\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.dll
+E:\Sachin\Application\TravellingProject\Travelling.Business\obj\Debug\Travelling.Business.pdb

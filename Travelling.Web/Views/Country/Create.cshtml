@@ -1,0 +1,139 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+}
+
+
+<h2>Create</h2>
+<form id="createCountry">
+    <div>
+        <label>Name</label>
+        <input type="text" name="Name" value="" />
+        <br /><br />
+
+        <label>Description</label>
+        <input type="text" name="Description" value="" />
+        <br /><br />
+
+        <label>Image</label>
+        <input type="hidden" name="ImageURL" id="ImageURL" />
+        <input type="file" name="Image" accept=".png, .jpg, .jpeg" id="imageUpload" />
+        <br />
+
+        <img id="countryImage" width="80" height="80" />
+        <br /><br />
+
+        <button type="button" id="saveCountry">Submit</button>
+    </div>
+</form>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#saveCountry').click(function () {
+            debugger;
+            if ($('#createCountry').valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Country/Create',
+                    data: $('#createCountry').serialize()
+                })
+                    .done(function (response) {
+                        $('#tableContainer').html(response);
+                        $('#actionContainer').html('');
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        swal({
+                            title: "Warning?",
+                            text: "Please enter all required all fields!",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                        })
+                    })
+            }
+            else {
+                swal({
+                    title: "Warning?",
+                    text: "Please enter all required all fields!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+            }
+        })
+
+        //--> Applying Validation on form.
+        $('#createCountry').validate({
+            rules: {
+                Name: {
+                    required: true,  //--> email: true,
+                    minlength: 1,
+                    maxlength: 100
+                },
+                Description: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 500
+                },
+                ImageURL: {
+                    required: true,
+                }
+            },
+            messages: {
+                Name: {
+                    required: 'Name is requried',
+                    minlength: 'Minimum lenght should be 1',
+                    maxlength: 'Minimum lenght should be 100'
+                },
+                Description: {
+                    required: 'Deccription is requried',
+                    minlength: 'Minimum lenght should be 1',
+                    maxlength: 'Minimum lenght should be 500'
+                },
+                ImageURL: {
+                    required: 'Image is required'
+                }
+            }
+        });
+
+        //--> Image Funtionallity
+        $('#imageUpload').change(function () {
+            debugger;
+            var element = this;
+            var formData = new FormData();
+            var totalFiles = element.files.length;
+
+            for (var i = 0; i < totalFiles; i++) {
+                var file = element.files[i];
+                formData.append("photo", file);
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Shared/UploadImage',
+                dataType: 'json',
+                data: formData,
+                contentType: false,
+                processData: false
+
+            })
+                .done(function (response) {
+                    debugger;
+                    console.log(response);
+                    if (response.Success) {
+                        $('#countryImage').attr("src", response.ImageURL);
+                        $('#ImageURL').val(response.ImageURL)
+                    }
+                    else {
+                        console.log('Some eror whiling upload a image')
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+    }) //-->  Here is Close document ready function().
+</script>

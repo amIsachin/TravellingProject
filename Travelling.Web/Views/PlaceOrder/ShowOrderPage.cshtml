@@ -1,0 +1,118 @@
+﻿@model Travelling.Web.ViewModels.ShowOrderPage
+
+@{
+    ViewBag.Title = "ShowOrderPage";
+}
+
+<div class="row">
+    <div class="col-md-4 order-md-2 mb-4">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Your Destination</span>
+        </h4>
+        <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                    <input type="hidden" name="ID" value="@Model.ID" id="placeID" />
+                    <h6 class="my-0">Detination Name</h6>
+                    <small class="text-muted">@Model.Name</small>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                    <h6 class="my-0">Destination Description</h6>
+                    <small class="text-muted">@Model.Description</small>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                    <h6 class="my-0">Destination Price</h6>
+                    <span class="text-muted">$ @Model.Price</span>
+                </div>
+            </li>
+        </ul>
+    </div> 
+
+    <div class="col-md-8 order-md-1">
+        <h4 class="mb-3">Booking Credential</h4>
+        <form class="needs-validation" novalidate id="UserForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="firstName">First name</label>
+                    <input type="text" class="form-control" id="firstName" >
+                    <div class="invalid-feedback">
+                        @* Validation Message *@
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="lastName">Last name</label>
+                    <input type="text" class="form-control" id="lastName" >
+                    <div class="invalid-feedback">
+                        @* Validation Message *@
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="username">Username</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"></span>
+                    </div>
+                    <input type="text" class="form-control" id="username" >
+                    <div class="invalid-feedback" style="width: 100%;">
+                        @* Validation Message *@
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email">Email </label>
+                <input type="text" class="form-control" id="email" placeholder="Travelling@hotmail.com">
+                <div class="invalid-feedback">
+                    @* Validation Message *@
+                </div>
+            </div>
+
+            <hr class="mb-4">
+
+            <button class="btn btn-primary btn-lg btn-block" type="button" id="confirmBooking">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#confirmBooking').click(function () {
+            var ID = $('#placeID').val();
+            var firstName = $('#firstName').val();
+            var lastName = $('#lastName').val();
+            var userName = $('#username').val();
+            var userEmial = $('#email').val();
+            console.log(ID)
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ConfirmBooking", "PlaceOrder")',
+                data: {
+                    ID: ID,
+                    firstName: firstName,
+                    lastName: lastName,
+                    userName: userName,
+                    userEmail: userEmial
+                }
+            })
+                .done(function (response) {
+                    if (response.Success) {
+                        swal("Good job!", "You clicked the button!", "success");
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Opps Something went wrong!!')
+                })
+        })
+
+
+    })  //--> Here is close document ready Function().
+</script>
